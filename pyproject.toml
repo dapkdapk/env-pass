@@ -1,0 +1,30 @@
+[project]
+name = "env-pass"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "pio4000",email = "pio4000@mailbox.org"}
+]
+requires-python = ">=3.14"
+dependencies = [
+    "click (>=8.5.0,<9.0.0)",
+    "jmespath (>=1.1.0,<2.0.0)",
+    "inquirer (>=3.4.1,<4.0.0)",
+]
+
+[tool.poetry]
+packages = [{include = "app"}]
+
+[tool.poetry.scripts]
+env-pass = "app.main:main"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "pytest (>=9.1.1,<10.0.0)",
+    "black (>=26.10.1,<27.0.0)",
+    "isort (>=9.0.2,<10.0.0)"
+]
