@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from app.libs.env_pass_cls import EnvPass
+from app_env_pass.libs.env_pass_cls import EnvPass
 
 
 def test_clear_string():

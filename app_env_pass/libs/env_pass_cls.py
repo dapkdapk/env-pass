@@ -5,7 +5,7 @@ import subprocess
 import inquirer
 import jmespath
 
-from app.libs.constants import (OBJ_KEY_TMP, TMPL_ENV_FILE, TMPL_EXPORT_ITEM,
+from app_env_pass.libs.constants import (OBJ_KEY_TMP, TMPL_ENV_FILE, TMPL_EXPORT_ITEM,
                                 TMPL_EXPORT_ITEM_LIST)
 
 

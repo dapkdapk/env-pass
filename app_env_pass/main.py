@@ -3,8 +3,8 @@ import re
 
 import click
 
-from app.libs.constants import DEFAULT_ENV_FILE_OUTPUT
-from app.libs.env_pass_cls import EnvPass
+from app_env_pass.libs.constants import DEFAULT_ENV_FILE_OUTPUT
+from app_env_pass.libs.env_pass_cls import EnvPass
 
 
 @click.command()
