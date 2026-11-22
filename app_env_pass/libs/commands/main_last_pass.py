@@ -2,7 +2,8 @@ import os
 
 import click
 
-from app_env_pass.libs.last_pass.constants_last_pass import DEFAULT_ENV_FILE_OUTPUT
+from app_env_pass.libs.last_pass.constants_last_pass import \
+    DEFAULT_ENV_FILE_OUTPUT
 from app_env_pass.libs.last_pass.env_last_pass_cls import EnvLastPass
 
 
@@ -31,11 +32,13 @@ from app_env_pass.libs.last_pass.env_last_pass_cls import EnvLastPass
 @click.option("-s", "--show-last-pass-output", is_flag=True)
 def execute(last_pass_entry_id, key_values, output_file, show_last_pass_output):
     if EnvLastPass.IsPassCLILogged() is True and last_pass_entry_id is not None:
-        print("JOJO")
-        """
-        _env_names = EnvLastPass.GetEnvNames(last_pass_entry_id, key_values, show_last_pass_output)
+        _env_names = EnvLastPass.GetEnvNames(
+            last_pass_entry_id, key_values, show_last_pass_output
+        )
         if len(_env_names) > 0:
-            _script = EnvProtonPass.GetEnvFileScript(_env_names, _share, _item)
+            _script = EnvLastPass.GetEnvFileScript(
+                _env_names=_env_names, last_pass_entry_id=last_pass_entry_id
+            )
             print("-" * 144)
             print("ENV FILE FOR SOURCE")
             print("-" * 144)
@@ -45,11 +48,8 @@ def execute(last_pass_entry_id, key_values, output_file, show_last_pass_output):
             with open(write_file, "w") as f:
                 f.write(_script)
             print(f"File '{write_file}' was written.")
-        """
     else:
-        print(
-            "Something goes wrong. Please check if ENTRY-ID is set."
-        )
+        print("Something goes wrong. Please check if ENTRY-ID is set.")
 
 
 if __name__ == "__main__":

@@ -1,10 +1,14 @@
-import jmespath
 import re
+
+import jmespath
+
 from app_env_pass.libs.constants import OBJ_KEY_TMP
+
 
 class EnvPass:
     def __init__(self):
         pass
+
     @staticmethod
     def _ClearString(s):
         if len(re.findall(r"\?", s)) > 0:

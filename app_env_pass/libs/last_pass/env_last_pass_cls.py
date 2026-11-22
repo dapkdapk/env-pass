@@ -1,49 +1,32 @@
-import json
 import re
 import subprocess
 
 import inquirer
 
+from app_env_pass.libs.last_pass.constants_last_pass import (TMPL_ENV_FILE,
+                                                             TMPL_EXPORT_ITEM)
 
-from app_env_pass.libs.last_pass.constants_last_pass import (TMPL_ENV_FILE,TMPL_EXPORT_ITEM)
-from app_env_pass.libs.env_pass_cls import EnvPass
 
 class EnvLastPass:
     def __init__(self):
         pass
 
     @staticmethod
-    def GetEnvFileScript(_env_names: dict, _share: str, _item: str):
+    def GetEnvFileScript(_env_names: dict, last_pass_entry_id: str):
         _export_items = []
         for k, v in _env_names.items():
-            _iss = k.split(".")
-            _m = False
-            for _is in _iss:
-                if len(re.findall(r"\[\]", _is)) > 0:
-                    _m = True
-                    break
-
-            if _m is True:
-                _iss_val = _iss.pop()
-                _export_items.append(
-                    TMPL_EXPORT_ITEM_LIST.format(
-                        env_name=v, json_path=".".join(_iss), name=_iss_val
-                    )
-                )
-            else:
-                _export_items.append(TMPL_EXPORT_ITEM.format(env_name=v, json_path=k))
+            _export_items.append(TMPL_EXPORT_ITEM.format(env_name=v, key_name=k))
         return TMPL_ENV_FILE.format(
             env_vars=" ".join(list(_env_names.values())),
-            shared_id=_share,
-            item_id=_item,
+            id=last_pass_entry_id,
             export_list="\n\t".join(_export_items),
         )
 
     @staticmethod
     def GetEnvNames(
-        _share: str, _item: str, key_values: str, show_json_paths: bool = False
+        last_pass_entry_id: str, key_values: str, show_last_pass_output: bool = False
     ) -> dict:
-        _cmd = f"$(which pass-cli) item view --output json --share-id {_share} --item-id {_item}"
+        _cmd = f"$(which lpass) show {last_pass_entry_id}"
         print("-" * 144)
         print(f"Execute: {_cmd}")
         print("-" * 144)
@@ -54,11 +37,19 @@ class EnvLastPass:
             stdout=subprocess.PIPE,
         )
         out, err = proc.communicate()
-        dict_obj = json.loads(out.decode())
-        _mylist = EnvPass._GetKeys(dict_obj)
-        if show_json_paths is True:
+        _mylist = {}
+        _i = 0
+        for e in out.decode().splitlines():
+            if _i == 0:
+                s = re.findall(r"(?:__|[*#])|\[(.*?)\]", e)
+                s = str(s[0]).split(":")
+            else:
+                s = str(e).split(":")
+            _mylist.update({str(s[0]).strip(): str(s[1]).strip()})
+            _i += 1
+        if show_last_pass_output is True:
             for mk, mv in _mylist.items():
-                if show_json_paths is True:
+                if show_last_pass_output is True:
                     print(mk, "=", mv)
             exit(1)
 
@@ -108,10 +99,8 @@ class EnvLastPass:
         out, err = proc.communicate()
         if str(out.decode()).startswith("Not"):
             print(
-                "lpass status not available, please login first, eg. 'lpass login'"
+                "lpass status not available, please login first, eg. 'lpass login USERNAME'"
             )
             return False
         else:
             return True
-
-

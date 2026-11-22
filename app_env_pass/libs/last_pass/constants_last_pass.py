@@ -15,11 +15,12 @@ fi
 
 if [[ "$pass_to_get" == 1 ]]; then
     lines=$(lpass show {id})
-    #export USERNAME="$(echo "$lines" | grep '^Username:' | cut -d' ' -f2)"
     {export_list}
 fi
 """
 
-TMPL_EXPORT_ITEM = '''export {env_name}="$(echo "$lines" | grep '^{key_name}:' | cut -d' ' -f2)"'''
+TMPL_EXPORT_ITEM = (
+    '''export {env_name}="$(echo "$lines" | grep '^{key_name}:' | cut -d' ' -f2)"'''
+)
 
 DEFAULT_ENV_FILE_OUTPUT = "./sample_last_pass.env"

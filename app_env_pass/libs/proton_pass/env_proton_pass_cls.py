@@ -4,10 +4,10 @@ import subprocess
 
 import inquirer
 
-from app_env_pass.libs.proton_pass.constants_proton_pass import (TMPL_ENV_FILE,
-                                         TMPL_EXPORT_ITEM,
-                                         TMPL_EXPORT_ITEM_LIST)
 from app_env_pass.libs.env_pass_cls import EnvPass
+from app_env_pass.libs.proton_pass.constants_proton_pass import (
+    TMPL_ENV_FILE, TMPL_EXPORT_ITEM, TMPL_EXPORT_ITEM_LIST)
+
 
 class EnvProtonPass:
     def __init__(self):
@@ -153,5 +153,3 @@ class EnvProtonPass:
             else _proton_pass_item_id
         )
         return _proton_pass_uri, _proton_pass_share_id, _proton_pass_item_id
-
-

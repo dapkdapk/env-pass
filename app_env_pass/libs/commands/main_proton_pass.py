@@ -2,7 +2,8 @@ import os
 
 import click
 
-from app_env_pass.libs.proton_pass.constants_proton_pass import DEFAULT_ENV_FILE_OUTPUT
+from app_env_pass.libs.proton_pass.constants_proton_pass import \
+    DEFAULT_ENV_FILE_OUTPUT
 from app_env_pass.libs.proton_pass.env_proton_pass_cls import EnvProtonPass
 
 
@@ -31,10 +32,18 @@ from app_env_pass.libs.proton_pass.env_proton_pass_cls import EnvProtonPass
     help="set output file. default is '{DEFAULT_ENV_FILE_OUTPUT}'",
 )
 @click.option("-s", "--show-json-paths", is_flag=True)
-def execute(proton_pass_uri, share_id, item_id, key_values, output_file, show_json_paths):
+def execute(
+    proton_pass_uri, share_id, item_id, key_values, output_file, show_json_paths
+):
     _uri, _share, _item = EnvProtonPass.GetSettings(proton_pass_uri, share_id, item_id)
-    if EnvProtonPass.IsPassCLILogged() is True and _share is not None and _item is not None:
-        _env_names = EnvProtonPass.GetEnvNames(_share, _item, key_values, show_json_paths)
+    if (
+        EnvProtonPass.IsPassCLILogged() is True
+        and _share is not None
+        and _item is not None
+    ):
+        _env_names = EnvProtonPass.GetEnvNames(
+            _share, _item, key_values, show_json_paths
+        )
         if len(_env_names) > 0:
             _script = EnvProtonPass.GetEnvFileScript(_env_names, _share, _item)
             print("-" * 144)
