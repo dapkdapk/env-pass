@@ -128,3 +128,33 @@ python -m pytest tests/ -v
 - JMESPath for JSON querying
 - Poetry for dependency management
 - Proton Pass CLI (`pass-cli`) for accessing Proton Pass items
+
+
+## ROADMAP
+
+- lastpass support
+- lastpass-cli install: https://github.com/lastpass/lastpass-cli
+- [example-entry](https://www.mankier.com/1/lpass)
+
+```
+lpass login
+lpass status
+Logged in as XXXX.
+lpass ls
+(none)
+    example-entry [id: 7478234270784347397]
+lpass show 7478234270784347397
+example-entry [id: 7478234270784347397]
+Username: username1
+Password: jsu/hZZ76sh#OO
+URL: https://example.com
+feld1: abc
+feld2: def
+lpass show 7478234270784347397 --field=feld1
+abc
+lpass show 7478234270784347397 --field=feld2
+def
+lpass show --username
+lpass show --password
+
+```

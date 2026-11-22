@@ -17,7 +17,9 @@ dependencies = [
 packages = [{include = "app_env_pass"}]
 
 [tool.poetry.scripts]
-env-pass = "app_env_pass.main:main"
+env-pass = "app_env_pass.main_cli:main_cli"
+env-proton-pass = "app_env_pass.libs.commands.main_proton_pass:execute"
+env-last-pass = "app_env_pass.libs.commands.main_last_pass:execute"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

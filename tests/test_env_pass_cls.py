@@ -3,24 +3,24 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from app_env_pass.libs.env_pass_cls import EnvPass
+from app_env_pass.libs.proton_pass.env_pass_cls import EnvProtonPass
 
 
 def test_clear_string():
     """Test the _ClearString method removes query parameters correctly."""
     # Test with query parameters
-    result = EnvPass._ClearString("abc123?query=param")
+    result = EnvProtonPass._ClearString("abc123?query=param")
     assert result == "abc123"
 
     # Test without query parameters
-    result = EnvPass._ClearString("abc123")
+    result = EnvProtonPass._ClearString("abc123")
     assert result == "abc123"
 
 
 def test_get_settings_with_uri():
     """Test GetSettings method with URI parameter."""
     uri = "https://example.com/share/abc123/item/def456?query=param"
-    proton_pass_uri, share_id, item_id = EnvPass.GetSettings(proton_pass_uri=uri)
+    proton_pass_uri, share_id, item_id = EnvProtonPass.GetSettings(proton_pass_uri=uri)
 
     assert share_id == "abc123"
     assert item_id == "def456"
@@ -28,7 +28,7 @@ def test_get_settings_with_uri():
 
 def test_get_settings_with_params():
     """Test GetSettings method with direct parameters."""
-    proton_pass_uri, share_id, item_id = EnvPass.GetSettings(
+    proton_pass_uri, share_id, item_id = EnvProtonPass.GetSettings(
         proton_pass_share_id="abc123", proton_pass_item_id="def456"
     )
 
@@ -46,7 +46,7 @@ def test_get_keys_simple_dict(mock_jmespath_search):
 
     obj = {"key1": "value1", "key2": "value2"}
 
-    result = EnvPass._GetKeys(obj)
+    result = EnvProtonPass._GetKeys(obj)
 
     # Should contain the keys with their values
     assert "key1" in result
@@ -59,7 +59,7 @@ def test_get_env_file_script():
     share_id = "test_share"
     item_id = "test_item"
 
-    result = EnvPass.GetEnvFileScript(env_names, share_id, item_id)
+    result = EnvProtonPass.GetEnvFileScript(env_names, share_id, item_id)
 
     # Check that the result contains expected elements
     assert share_id in result
