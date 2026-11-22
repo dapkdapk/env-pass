@@ -104,3 +104,10 @@ class EnvLastPass:
             return False
         else:
             return True
+
+    @staticmethod
+    def ValidateLastPassId(ans, curr):
+        try:
+            return False if re.match(r"([0-9])", str(curr)) is None else True
+        except:
+            False

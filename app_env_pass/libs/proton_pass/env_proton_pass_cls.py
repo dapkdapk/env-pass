@@ -1,4 +1,5 @@
 import json
+import logging
 import re
 import subprocess
 
@@ -69,28 +70,35 @@ class EnvProtonPass:
             for mk, mv in _mylist.items():
                 _selection.append(mk + " = " + mv)
 
-            questions_path = [
-                inquirer.Checkbox(
-                    "values",
-                    message="Select (secret) values you needed",
-                    choices=_selection,
-                ),
-            ]
+            try:
+                questions_path = [
+                    inquirer.Checkbox(
+                        "values",
+                        message="Select (secret) values you needed",
+                        choices=_selection,
+                    ),
+                ]
 
-            answers_path = inquirer.prompt(questions_path)
-            _choosen = []
-            for ans in answers_path["values"]:
-                _name = str(ans.split(" = ")[0]).strip()
-                _choosen.append(
-                    inquirer.Text(
-                        _name, message=f"Set environment variable name for '{_name}'"
+                answers_path = inquirer.prompt(questions_path)
+
+                _choosen = []
+                for ans in answers_path["values"]:
+                    _name = str(ans.split(" = ")[0]).strip()
+                    _choosen.append(
+                        inquirer.Text(
+                            _name,
+                            message=f"Set environment variable name for '{_name}'",
+                        )
                     )
-                )
-            questions_env_name = _choosen
+                questions_env_name = _choosen
 
-            _env_names = inquirer.prompt(questions_env_name)
-            for k, v in _env_names.items():
-                _env_names[k] = v.upper()
+                _env_names = inquirer.prompt(questions_env_name)
+                for k, v in _env_names.items():
+                    _env_names[k] = v.upper()
+            except:
+                logging.info("Aborted")
+                quit()
+
         else:
             _kv = key_values.split(",")
             for kv in _kv:
@@ -153,3 +161,14 @@ class EnvProtonPass:
             else _proton_pass_item_id
         )
         return _proton_pass_uri, _proton_pass_share_id, _proton_pass_item_id
+
+    @staticmethod
+    def ValidateProtonPassUri(curr):
+        try:
+            return (
+                True
+                if len(re.findall(r"((\/)share(\/))|((\/)item(\/))", curr)) > 0
+                else False
+            )
+        except:
+            False

@@ -1,7 +1,10 @@
+import logging
 import os
 
 import click
 
+from app_env_pass.libs.ak_args import AKArgs
+from app_env_pass.libs.constants import DEFAULT_CLI_TITLE
 from app_env_pass.libs.last_pass.constants_last_pass import \
     DEFAULT_ENV_FILE_OUTPUT
 from app_env_pass.libs.last_pass.env_last_pass_cls import EnvLastPass
@@ -11,9 +14,7 @@ from app_env_pass.libs.last_pass.env_last_pass_cls import EnvLastPass
 @click.option(
     "-id",
     "--last-pass-entry-id",
-    prompt=True,
     type=click.STRING,
-    required=True,
     help="set last pass entry id, eg. 7478234270784347397, eg. you'll find the entry-id under in the bottom of the edit dialog of the last pass browser extension.",
 )
 @click.option(
@@ -30,7 +31,36 @@ from app_env_pass.libs.last_pass.env_last_pass_cls import EnvLastPass
     help="set output file. default is '{DEFAULT_ENV_FILE_OUTPUT}'",
 )
 @click.option("-s", "--show-last-pass-output", is_flag=True)
-def execute(last_pass_entry_id, key_values, output_file, show_last_pass_output):
+@click.option(
+    "-ll",
+    "--logging-level",
+    help="logging level - default is INFO",
+    type=click.Choice(
+        ["INFO", "DEBUG", "ERROR"],
+        case_sensitive=False,
+    ),
+    required=False,
+    default="INFO",
+    envvar="DEBUG_LEVEL",
+)
+def execute(
+    last_pass_entry_id, key_values, output_file, show_last_pass_output, logging_level
+):
+    AKArgs.SetupLogging(logging_level=logging_level)
+    AKArgs.PrintLogs(
+        logging.INFO,
+        DEFAULT_CLI_TITLE.format(
+            env_pass_version=AKArgs.GetVersionByPackageLibName("env-pass"),
+            description=f"{os.path.basename(__file__).upper()[:-3]}: Create and save an env file for last pass entry.",
+        ),
+    )
+
+    last_pass_entry_id = AKArgs.ArgPromptText(
+        last_pass_entry_id,
+        message=f"Enter Last Pass entry ID",
+        validate=EnvLastPass.ValidateLastPassId,
+    )
+
     if EnvLastPass.IsPassCLILogged() is True and last_pass_entry_id is not None:
         _env_names = EnvLastPass.GetEnvNames(
             last_pass_entry_id, key_values, show_last_pass_output

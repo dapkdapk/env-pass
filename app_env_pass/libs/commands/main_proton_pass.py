@@ -1,7 +1,10 @@
+import logging
 import os
 
 import click
 
+from app_env_pass.libs.ak_args import AKArgs
+from app_env_pass.libs.constants import DEFAULT_CLI_TITLE
 from app_env_pass.libs.proton_pass.constants_proton_pass import \
     DEFAULT_ENV_FILE_OUTPUT
 from app_env_pass.libs.proton_pass.env_proton_pass_cls import EnvProtonPass
@@ -11,9 +14,7 @@ from app_env_pass.libs.proton_pass.env_proton_pass_cls import EnvProtonPass
 @click.option(
     "-u",
     "--proton-pass-uri",
-    prompt=True,
     type=click.STRING,
-    required=True,
     help="set proton pass uri, eg. moz-extension://.../popup.html#/u/7/share/A...",
 )
 @click.option("-si", "--share-id", type=click.STRING, help="set proton pass share_id")
@@ -32,9 +33,40 @@ from app_env_pass.libs.proton_pass.env_proton_pass_cls import EnvProtonPass
     help="set output file. default is '{DEFAULT_ENV_FILE_OUTPUT}'",
 )
 @click.option("-s", "--show-json-paths", is_flag=True)
+@click.option(
+    "-ll",
+    "--logging-level",
+    help="logging level - default is INFO",
+    type=click.Choice(
+        ["INFO", "DEBUG", "ERROR"],
+        case_sensitive=False,
+    ),
+    required=False,
+    default="INFO",
+    envvar="DEBUG_LEVEL",
+)
 def execute(
-    proton_pass_uri, share_id, item_id, key_values, output_file, show_json_paths
+    proton_pass_uri,
+    share_id,
+    item_id,
+    key_values,
+    output_file,
+    show_json_paths,
+    logging_level,
 ):
+    AKArgs.SetupLogging(logging_level=logging_level)
+    AKArgs.PrintLogs(
+        logging.INFO,
+        DEFAULT_CLI_TITLE.format(
+            env_pass_version=AKArgs.GetVersionByPackageLibName("env-pass"),
+            description=f"{os.path.basename(__file__).upper()[:-3]}: Create and save an env file for proton pass uri.",
+        ),
+    )
+    proton_pass_uri = AKArgs.ArgPromptLong(
+        proton_pass_uri,
+        message=f"Enter Proton Pass uri:",
+        validate=EnvProtonPass.ValidateProtonPassUri,
+    )
     _uri, _share, _item = EnvProtonPass.GetSettings(proton_pass_uri, share_id, item_id)
     if (
         EnvProtonPass.IsPassCLILogged() is True
