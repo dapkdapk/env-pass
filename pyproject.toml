@@ -1,23 +1,26 @@
 [project]
 name = "env-pass"
-version = "0.1.3"
+version = "0.1.4"
 description = "A small tool for generating env files extracted from Proton pass secrets."
 readme = "README.md"
 authors = [
     {name = "pio4000",email = "pio4000@mailbox.org"}
 ]
-requires-python = ">=3.11"
+requires-python = ">=3.11,<4.0"
 dependencies = [
     "click (>=8.5.0,<9.0.0)",
     "jmespath (>=1.1.0,<2.0.0)",
     "inquirer (>=3.4.1,<4.0.0)",
+    "inquirerpy (>=0.3.4,<0.4.0)",
 ]
 
 [tool.poetry]
 packages = [{include = "app_env_pass"}]
 
 [tool.poetry.scripts]
-env-pass = "app_env_pass.main:main"
+env-pass = "app_env_pass.main_cli:main_cli"
+env-proton-pass = "app_env_pass.libs.commands.main_proton_pass:execute"
+env-last-pass = "app_env_pass.libs.commands.main_last_pass:execute"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

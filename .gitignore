@@ -166,3 +166,4 @@ temp/*
 output/*
 dist/*
 sample.env
+sample_*.env

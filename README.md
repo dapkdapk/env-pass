@@ -15,7 +15,7 @@ Key features:
 - Automatic generation of sourceable bash environment files
 - JSON path exploration for complex item structures
 
-Example URI (You get this URI via FireFox or Chrome, if you launch Proton Pass Extension as big window. URI appears in browser prompt.):
+Example URI (You get this URI via Firefox or Chrome, if you launch Proton Pass Extension as big window. URI appears in browser prompt.):
 
 ```
 moz-extension://.../popup.html#/u/7/share/A.../item/B...
@@ -117,7 +117,13 @@ poetry run env-pass --help
 To run the unit tests:
 
 ```bash
-python -m pytest tests/ -v
+poetry run pytest tests/ -v
+```
+
+Or run tests for the specific module:
+
+```bash
+poetry run pytest tests/test_env_pass_cls.py -v
 ```
 
 ## Dependencies
@@ -128,3 +134,50 @@ python -m pytest tests/ -v
 - JMESPath for JSON querying
 - Poetry for dependency management
 - Proton Pass CLI (`pass-cli`) for accessing Proton Pass items
+
+## Development
+
+### Setting up the Development Environment
+
+1. Clone the repository
+2. Install dependencies with Poetry:
+   ```bash
+   poetry install
+   ```
+3. Activate the virtual environment:
+   ```bash
+   poetry shell
+   ```
+
+### Running Tests
+
+Run all tests:
+```bash
+poetry run pytest
+```
+
+Run tests with coverage:
+```bash
+poetry run pytest --cov=app_env_pass
+```
+
+### Code Structure
+
+- `app_env_pass/` - Main application code
+  - `libs/` - Core library modules
+    - `proton_pass/` - Proton Pass specific functionality
+    - `env_pass_cls.py` - Base environment parsing class
+  - `main_cli.py` - Command-line interface entry point
+- `tests/` - Unit tests
+- `scripts/` - Utility scripts
+- `cli_install_bash.sh` - Installation script
+
+### Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add or update tests as needed
+5. Ensure all tests pass
+6. Submit a pull request
+
