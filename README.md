@@ -1,183 +1,123 @@
 # env-pass
 
-A command-line interface tool for extracting secrets from Proton Pass items and generating environment files.
+A small tool for generating env files extracted from Proton Pass and LastPass secrets.
 
-## What it does
+## Description
 
-This CLI application takes a Proton Pass URI as input, extracts the share and item identifiers, retrieves the item details from Proton Pass, and generates a bash environment file with selected secrets. It's designed to help automate the process of injecting Proton Pass secrets into development environments or deployment workflows.
+The `env-pass` tool allows you to securely extract environment variables from your Proton Pass or LastPass vaults and generate `.env` files for your applications. This helps you manage sensitive configuration data without hardcoding secrets in your source code.
 
-Key features:
+## Features
 
-- Extracts share and item identifiers from Proton Pass URIs
-- Retrieves item details using the `pass-cli` tool
-- Interactive selection of secrets to export
-- Customizable environment variable naming
-- Automatic generation of sourceable bash environment files
-- JSON path exploration for complex item structures
+- Extract environment variables from Proton Pass entries
+- Extract environment variables from LastPass entries
+- Generate `.env` files with your secret values
+- Support for JSONPath expressions to select specific fields
+- Secure handling of credentials through your existing password manager setup
 
-Example URI (You get this URI via Firefox or Chrome, if you launch Proton Pass Extension as big window. URI appears in browser prompt.):
-
-```
-moz-extension://.../popup.html#/u/7/share/A.../item/B...
-```
-
-The tool will:
-
-1. Extract Share ID: A... and Item ID: B...
-2. Retrieve the item details from Proton Pass
-3. Allow you to select which secrets to export
-4. Generate a bash environment file with your selected secrets
-
-## Using
-
-### Basic Usage
-
-To use the CLI, run:
+## Installation
 
 ```bash
-env-pass --proton-pass-uri "your_proton_pass_uri_here"
+pip install env-pass
 ```
 
-Or with the prompt:
-
-```bash
-env-pass
-# You will be prompted to enter the URI
-```
-
-### Advanced Usage
-
-You can also specify key-value mappings directly:
-
-```bash
-env-pass --proton-pass-uri "your_proton_pass_uri_here" --key-values "PASSWORD=item.login.password,TOKEN=item.content.extra_fields[].token"
-```
-
-To explore available JSON paths in your item:
-
-```bash
-env-pass --proton-pass-uri "your_proton_pass_uri_here" --show-json-paths
-```
-
-To specify a custom output file:
-
-```bash
-env-pass --proton-pass-uri "your_proton_pass_uri_here" --output-file "./.env.production"
-```
-
-### Interactive Mode
-
-When run without `--key-values`, the tool will:
-
-1. Display all available JSON paths in the item
-2. Let you select which values you want to export
-3. Prompt you to name the environment variables for each selected value
-
-## Installing
-
-### Prerequisites
-
-1. Python 3.14+
-2. Poetry for dependency management
-3. Proton Pass CLI (`pass-cli`) installed and configured
-
-### Installation Steps
-
-1. Clone the repository:
-
-```bash
-git clone <repository-url>
-cd env-pass
-```
-
-2. Install dependencies and build the package:
-
-```bash
-chmod +x cli_install_bash.sh
-./cli_install_bash.sh
-```
-
-3. The tool is now available as `env-pass` command:
-
-```bash
-env-pass --help
-```
-
-### Alternative Installation Method
-
-You can also run directly with Poetry:
+Or install directly from source:
 
 ```bash
 poetry install
-poetry run env-pass --help
 ```
 
-## Testing
+## Usage
 
-To run the unit tests:
+### Proton Pass
 
 ```bash
-poetry run pytest tests/ -v
+env-pass ppass --proton-pass-uri "moz-extension://.../popup.html#/u/7/share/A..." --share-id "SHARE_ID" --item-id "ITEM_ID" --key-values "PASSWORD=item.login.password,TOKEN=item.content.extra_fields[].name"
 ```
 
-Or run tests for the specific module:
+Options:
+- `-u`, `--proton-pass-uri`: Set Proton Pass URI
+- `-si`, `--share-id`: Set Proton Pass share_id
+- `-ii`, `--item-id`: Set Proton Pass item_id
+- `-kv`, `--key-values`: Set ENV-VARIABLE=JSON-PATH (comma-separated for multiple)
+- `-o`, `--output-file`: Set output file (default is '.env')
+- `-s`, `--show-json-paths`: Show available JSON paths
+- `-ll`, `--logging-level`: Set logging level (INFO, DEBUG, ERROR)
+
+### Last Pass
 
 ```bash
-poetry run pytest tests/test_env_pass_cls.py -v
+env-pass lpass --last-pass-uri "..." --share-id "..." --item-id "..." --key-values "..."
 ```
+
+## Examples
+
+### Sample Proton Pass Entry
+
+Given a Proton Pass entry with the following structure:
+```json
+{
+  "item": {
+    "login": {
+      "password": "mysecretpassword",
+      "totp_uri": "otpauth://totp/example"
+    },
+    "content": {
+      "extra_fields": [
+        {"name": "API_KEY", "value": "abc123"},
+        {"name": "DATABASE_URL", "value": "postgresql://user:pass@localhost/db"}
+      ]
+    }
+  }
+}
+```
+
+You can extract environment variables like this:
+```bash
+env-pass ppass \
+  --proton-pass-uri "moz-extension://.../popup.html#/u/7/share/A..." \
+  --share-id "SHARE_ID" \
+  --item-id "ITEM_ID" \
+  --key-values "DB_PASSWORD=item.login.password,API_KEY=item.content.extra_fields[0].value,DATABASE_URL=item.content.extra_fields[1].value"
+```
+
+This would generate a `.env` file with:
+```env
+DB_PASSWORD=mysecretpassword
+API_KEY=abc123
+DATABASE_URL=postgresql://user:pass@localhost/db
+```
+
+## Requirements
+
+- Python >= 3.11
+- Proton Pass or LastPass browser extension
+- Access to your password vault
 
 ## Dependencies
 
-- Python 3.14+
-- Click library for CLI handling
-- Inquirer for interactive prompts
-- JMESPath for JSON querying
-- Poetry for dependency management
-- Proton Pass CLI (`pass-cli`) for accessing Proton Pass items
+- click (>=8.5.0,<9.0.0)
+- jmespath (>=1.1.0,<2.0.0)
+- inquirer (>=3.4.1,<4.0.0)
+- inquirerpy (>=0.3.4,<0.4.0)
 
 ## Development
 
-### Setting up the Development Environment
+Install development dependencies:
+```bash
+poetry install
+```
 
-1. Clone the repository
-2. Install dependencies with Poetry:
-   ```bash
-   poetry install
-   ```
-3. Activate the virtual environment:
-   ```bash
-   poetry shell
-   ```
-
-### Running Tests
-
-Run all tests:
+Run tests:
 ```bash
 poetry run pytest
 ```
 
-Run tests with coverage:
+Format code:
 ```bash
-poetry run pytest --cov=app_env_pass
+poetry run black .
+poetry run isort .
 ```
 
-### Code Structure
+## License
 
-- `app_env_pass/` - Main application code
-  - `libs/` - Core library modules
-    - `proton_pass/` - Proton Pass specific functionality
-    - `env_pass_cls.py` - Base environment parsing class
-  - `main_cli.py` - Command-line interface entry point
-- `tests/` - Unit tests
-- `scripts/` - Utility scripts
-- `cli_install_bash.sh` - Installation script
-
-### Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add or update tests as needed
-5. Ensure all tests pass
-6. Submit a pull request
-
+MIT License - see LICENSE file for details.
